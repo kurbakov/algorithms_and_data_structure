@@ -18,7 +18,7 @@ class SingleLinkedList{
 private:
     Node<T>* begin;
     Node<T>* end;
-    long long size;
+    uint64_t size;
 
 public:
     SingleLinkedList();
