@@ -4,16 +4,12 @@
 namespace HashTable{
 template<typename T>
 struct Node{
-    T* key;
+    T key;
     Node<T>* Next;
-
-    Node(){
-        key = nullptr;
-        Next = nullptr;
-    }
-
+    
+    Node(){};
     Node(T data){
-        key = &data;
+        key = data;
         Next = nullptr;
     }
 };
@@ -24,6 +20,7 @@ private:
     uint64_t BUFFER;
     uint64_t Size;
     Node<T>* Table;
+    bool* is_free;
 
     uint64_t hash_function(T);
 
@@ -54,6 +51,10 @@ HTable<T>::HTable(){
     BUFFER = 100;
     Size = 0;
     Table = new Node<T>[BUFFER];
+    is_free = new bool[BUFFER];
+    for(int i=0; i<BUFFER; i++){
+        is_free[i] = true;
+    }
 }
 
 template <class T>
@@ -68,7 +69,8 @@ HTable<T>::~HTable(){
             }
         }
     }
-    delete Table;
+    delete[] Table;
+    delete[] is_free;
 }
 
 template <class T>
@@ -84,10 +86,10 @@ bool HTable<T>::is_empty(){
 template<class T>
 void HTable<T>::print(){
     for(int i=0; i<BUFFER; i++){
-        if(Table[i].key != nullptr){
+        if(!is_free[i]){
             Node<T>* cur = &Table[i];
             while(cur != nullptr){
-                std::cout << *cur->key << " ";
+                std::cout << cur->key << " ";
                 cur = cur->Next;
             }
             std::cout << "\n";
@@ -98,49 +100,53 @@ void HTable<T>::print(){
 template <class T>
 void HTable<T>::insert(T v){
     uint64_t idx = hash_function(v);
-    if(Table[idx].key == nullptr){
-        Table[idx].key = &v;
+    if(is_free[idx]){
+        Table[idx].key = v;
+        is_free[idx] = false;
         return;
     }
-
-    Node<T>* cur = &Table[idx];
-    while(cur->key != nullptr){
-        if(cur->key == &v) return;
-        cur = cur->Next;
+    else{
+        Node<T>* new_node = new Node<T>(v);
+        new_node->Next = Table[idx].Next;
+        Table[idx].Next = new_node;
     }
-
-    Node<T>* new_node = new Node<T>(v);
-    cur->Next = new_node;
     return;
 }
 
 template <class T>    
 void HTable<T>::remove(T v){
     uint64_t idx = hash_function(v);
-    if(*Table[idx].key == v){
-        Table[idx].key = nullptr;
+    if(is_free[idx]) return;
+
+    if(Table[idx].key == v && Table[idx].Next == nullptr){
+        is_free[idx] = true;
         return;
     }
+
     Node<T>* cur = &Table[idx];
-    while(cur->Next != nullptr){
-        if(*cur->Next->key == v){
+    while(cur != nullptr){
+        if(cur->key == v){
+            while(cur->Next != nullptr){
+                cur->key = cur->Next->key;
+            }
+
             Node<T>* del = cur->Next;
-            cur->Next = del->Next;
+            cur->Next = nullptr;
             delete del;
             return;
         }
         cur = cur->Next;
     }
-
 }
 
 template <class T>
-bool HTable<T>::find(T key){
-    uint64_t idx = hash_function(key);
-    Node<T>* cur = Table[idx];
+bool HTable<T>::find(T v){
+    uint64_t idx = hash_function(v);
+    if(is_free[idx]) return false;
 
+    Node<T>* cur = &Table[idx];
     while (cur != nullptr){
-        if(cur->data == key){
+        if( cur->key == v){
             return true;
         }
         else{
@@ -156,9 +162,17 @@ int main(){
     HashTable::HTable<int> ht;
     ht.insert(1);
     ht.insert(10);
-    ht.print();
     ht.remove(1);
+
     ht.print();
+
+    if(ht.find(10) == true){
+        std::cout << "found" <<"\n";
+    }
+
+    if(ht.find(1) == false){
+        std::cout << "not found" << "\n";
+    }
     
     return 0;
 }
