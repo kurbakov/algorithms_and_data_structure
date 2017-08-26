@@ -70,7 +70,6 @@ uint64_t Queue<T>::get_size(){
 template <class T>
 T Queue<T>::front(){
     return Front->data;
-
 }
 
 template <class T>
