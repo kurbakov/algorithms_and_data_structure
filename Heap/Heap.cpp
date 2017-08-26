@@ -1,22 +1,22 @@
-// Source: http://www.sourcetricks.com/2011/06/c-heaps.html
-// Info: https://www.tutorialspoint.com/data_structures_algorithms/heap_data_structure.htm
-
 #include <iostream>
-#include "vector"
 
 namespace DS_Heap{
 template<class T>
 class Heap{
 private:
-    std::vector<T> heap;
+    T* heap;
+    uint64_t Size;
+    uint64_t Buffer;
+
     void fix_insert(int);
     int parent(int);
+
 
 public:
     Heap();
     ~Heap();
 
-    int get_size();
+    uint64_t get_size();
     void add_node(T);
     void print_heap();
     void delete_min();
@@ -26,33 +26,42 @@ public:
 
 namespace DS_Heap{
 template<class T>
-Heap<T>::Heap() {}
-
-template<class T>
-Heap<T>::~Heap() {}
-
-template<class T>
-int Heap<T>::get_size() { return heap.size();}
-
-template<class T>
-void Heap<T>::add_node(T v) {
-    heap.push_back(v);
-    fix_insert(heap.size() - 1);
+Heap<T>::Heap() {
+    heap = new T[100];
+    Buffer = 100;
+    Size = 0;
 }
 
 template<class T>
-void Heap<T>::fix_insert(int x) {
+Heap<T>::~Heap() {
+    delete[] heap;
+}
+
+template<class T>
+uint64_t Heap<T>::get_size(){ 
+    return Size;
+}
+
+template<class T>
+void Heap<T>::add_node(T v){
+    heap[Size] = v;
+    fix_insert(Size);
+    Size++;
+}
+
+template<class T>
+void Heap<T>::fix_insert(int x){
     while ( (x>0) && (parent(x)>=0) && (heap[parent(x)]>heap[x]) )
     {
-        int tmp = heap[parent(x)];
+        T temp = heap[parent(x)];
         heap[parent(x)] = heap[x];
-        heap[x] = tmp;
+        heap[x] = temp;
         x = parent(x);
     }
 }
 
 template<class T>
-int Heap<T>::parent(int child) {
+int Heap<T>::parent(int child){
     if (child != 0) {
         int i = (child - 1) >> 1;
         return i;
@@ -61,20 +70,23 @@ int Heap<T>::parent(int child) {
 }
 
 template<class T>
-void Heap<T>::print_heap() {
-    for(unsigned int i=0;i<heap.size();i++)
+void Heap<T>::print_heap(){
+    for(unsigned int i=0; i<Size; i++)
         std::cout << heap[i] << " ";
-    std::cout<<std::endl;
+    std::cout << "\n";
 }
 
 template<class T>
 void Heap<T>::delete_max() {
-    heap.pop_back();
+    Size--;
 }
 
 template<class T>
 void Heap<T>::delete_min() {
-    heap.erase(heap.begin());
+    for(int i=1; i<Size; i++){
+        heap[i-1] = heap[i];
+    }
+    Size--;
 }
 }; // namespace
 
