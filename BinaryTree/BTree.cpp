@@ -79,18 +79,21 @@ namespace Btree{
             if(parent->left == del) parent->left = nullptr;
             else parent->right = nullptr;
             delete del;
+            Size--;
         }
         // only left is null
         else if(del->left == nullptr){
             if(parent->left == del) parent->left = del->right;
             else parent->right = del->right;
             delete del;
+            Size--;
         }
         // only right is null
         else if(del->right == nullptr){
             if(parent->left == del) parent->left = del->left;
             else parent->right = del->left;
             delete del;
+            Size--;
         }
         // non is null
         else{
