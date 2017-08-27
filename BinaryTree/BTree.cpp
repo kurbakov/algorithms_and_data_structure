@@ -74,7 +74,7 @@ namespace Btree{
     template<class T>
     void BinaryTree<T>::delete_node(Node<T>* parent, Node<T>* del){
 
-        // botth are null
+        // both are null
         if(del->left == nullptr && del->right == nullptr){
             if(parent->left == del) parent->left = nullptr;
             else parent->right = nullptr;
@@ -229,14 +229,14 @@ namespace Btree{
                 while(s->left != nullptr) s = s->left;
 
                 Root->data = s->data;
+
                 Node<T>* p = Root;
-                if(p->right->data != s->data){
-                    p = p->right;
-                    while(p->left != nullptr){
-                        if(p->left->data == s->data) break;
-                        else p = p->left;
-                    }
+                if(p->right->data == s->data){
+                    delete_node(p, s);
                 }
+                p = p->right;
+                while(p->left->data != s->data) p=p->left;
+                
                 delete_node(p, s);
             }
             return true;
