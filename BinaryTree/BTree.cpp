@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iomanip>  
 
 namespace Btree{
 template <typename T>
@@ -25,7 +24,7 @@ private:
     void pre_order(Node<T>*);
     void post_order(Node<T>*);
     void clear_tree(Node<T>*);
-    void delete_node(Node<T>*, T);
+    void delete_node(Node<T>*, Node<T>*);
 
 public:
     BinaryTree();
@@ -73,42 +72,47 @@ namespace Btree{
     }
 
     template<class T>
-    void BinaryTree<T>::delete_node(Node<T>* parent, T v){
-        Node<T>* del;
-        if(v > parent->data){
-            del = parent->right;
-        }
-        else{
-            del = parent->left;
-        }
+    void BinaryTree<T>::delete_node(Node<T>* parent, Node<T>* del){
 
         // botth are null
         if(del->left == nullptr && del->right == nullptr){
-            if(v > parent->data) parent->right = nullptr;
-            else parent->left = nullptr;
+            if(parent->left == del) parent->left = nullptr;
+            else parent->right = nullptr;
             delete del;
         }
         // only left is null
         else if(del->left == nullptr){
-            if(v>parent->data) parent->right = del->right;
-            else parent->left = del->right;
+            if(parent->left == del) parent->left = del->right;
+            else parent->right = del->right;
             delete del;
         }
         // only right is null
         else if(del->right == nullptr){
-            if(v > parent->data) parent->right = del->left;
-            else parent->left = del->left;
+            if(parent->left == del) parent->left = del->left;
+            else parent->right = del->left;
             delete del;
         }
         // non is null
         else{
-            // the case with many conditions
-            // I see no sense in coding this part
-            // if you are interested
-            // feel free to contact me or just check here:
-            // http://www.algolist.net/Data_structures/Binary_search_tree/Removal
-            // http://www.tech-faq.com/binary-tree-deleting-a-node.html
-            // https://msdn.microsoft.com/en-us/library/ms379572(v=vs.80).aspx
+            // Logic: 
+            // 1. find the successor
+            Node<T>* s = del->right;
+            while(s->left != nullptr) s = s->left;
+            
+            // 2. swap the values between del and successor
+            del->data = s->data;
+
+            // 3. find the parent of successor
+            Node<T>* p = del;
+            if(p->right->data == s->data){
+                delete_node(p, s);
+                return;
+            }
+            p = p->right;
+            while(p->left->data != s->data) p=p->left;
+            
+            // 4. call the delete function again
+            delete_node(p, s);
         }
         return;
     }
@@ -199,19 +203,49 @@ namespace Btree{
     template <class T>
     bool BinaryTree<T>::erase(T v){
         if(Root->data == v){
-            delete Root;
-            Root = nullptr;
-            Size = 0;
+            // need to rewrite!!!
+            if(Root->left == nullptr && Root->right == nullptr){
+                delete Root;
+                Root = nullptr;
+                Size = 0;
+            }
+            else if(Root->left == nullptr){
+                Node<T>* del = Root;
+                Root = Root->right;
+                delete del;
+                Size--;
+            }
+            else if(Root->right == nullptr){
+                Node<T>* del = Root;
+                Root = Root->left;
+                delete del;
+                Size--;
+            }
+            else{
+                Node<T>* s = Root->right;
+                while(s->left != nullptr) s = s->left;
+
+                Root->data = s->data;
+                Node<T>* p = Root;
+                if(p->right->data != s->data){
+                    p = p->right;
+                    while(p->left != nullptr){
+                        if(p->left->data == s->data) break;
+                        else p = p->left;
+                    }
+                }
+                delete_node(p, s);
+            }
             return true;
         }
 
         Node<T>* cur = Root;
         while(cur != nullptr){
             // check kids
-            if(v > cur->value && cur->right != nullptr){
+            if(v > cur->data && cur->right != nullptr){
                 if(cur->right->data == v) break;
             }
-            if(v < cur->value && cur->left != nullptr){
+            if(v < cur->data && cur->left != nullptr){
                 if(cur->left->data == v) break;
             }
 
@@ -221,7 +255,12 @@ namespace Btree{
 
         if(cur == nullptr) return false;
 
-        delete_node(cur, v);
+        if(cur->left->data == v){
+            delete_node(cur, cur->left);
+        }
+        else{
+            delete_node(cur, cur->right);
+        }
         return true;
     }
 
@@ -238,6 +277,11 @@ int main(){
     bt.insert(15);
     bt.insert(13);
     bt.insert(17);
+    bt.insert(8);
+    bt.insert(3);
+    bt.insert(9);
+
+    bt.erase(15);
 
     bt.print();
 
