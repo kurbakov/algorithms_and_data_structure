@@ -5,20 +5,19 @@ void bubble_sort(T* Arr, uint64_t Size, bool (*Comp)(T,T)){
     T temp;
     for (int j=0; j < Size; j++) {
         for (int i = 0; i < Size - 1 - j; i++) {
-
             if ((*Comp)(Arr[i], Arr[i+1])) {
+                // swap
                 temp = Arr[i+1];
                 Arr[i+1] = Arr[i];
                 Arr[i] = temp;
             }
-
         }
     }
 }
 
 template <typename T>
 bool f(T a, T b){
-    return a>b;
+    return a<b;
 }
 
 int main()
