@@ -45,33 +45,25 @@ T StringToNumber(std::string input)
 }
 
 template<typename T>
-T PolishNotation(std::string &str){
+T PolishNotationReverse(std::string &str){
     std::vector<std::string> data = StringToVector(str, ' ');
 
-    std::stack<char> operator_stack;
     std::stack<T> operand_stack;
-    bool pending_operand;
-
+    T t_temp, l ,r;
     for(auto tocken : data){
-        if(tocken.size() == 1 && (tocken == "+" || tocken == "-" || tocken == "*" || tocken == "/" )){
-            operator_stack.push(tocken[0]);
-            pending_operand = false;
+        if(tocken.size() == 1 && (tocken[0] == '+' || tocken[0] == '-' || tocken[0] == '*' || tocken[0] == '/' )){
+            r = operand_stack.top();
+            operand_stack.pop();
+
+            l = operand_stack.top();
+            operand_stack.pop();
+
+            t_temp = Compute(tocken[0], l, r);
+            operand_stack.push(t_temp);
         }
         else{
-            T t_temp = StringToNumber<T>(tocken);
-            if(pending_operand){
-                while(!operand_stack.empty()){
-                    T l = operand_stack.top();
-                    operand_stack.pop();
-
-                    char oper = operator_stack.top();
-                    operator_stack.pop();
-
-                    t_temp = Compute(oper, l, t_temp);
-                }
-            }
+            t_temp = StringToNumber<T>(tocken);
             operand_stack.push(t_temp);
-            pending_operand = true;
         }
     }
 
@@ -79,8 +71,8 @@ T PolishNotation(std::string &str){
 }
 
 int main(){
-    std::string input = "- * / 15 - 7 + 1 1 3 + 2 + 1 1";
-    auto x = PolishNotation<int>(input);
+    std::string input = "15 7 1 1 + - / 3 * 2 1 1 + + -";
+    auto x = PolishNotationReverse<int>(input);
     std::cout << x << "\n";
 
     return 0;
