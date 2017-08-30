@@ -36,13 +36,13 @@ void PrintArray(T* arr, uint64_t Size){
     for(int i=0; i<Size; i++){
         std::cout<< arr[i] << " ";
     }
-    std::cout<<std::endl;
+    std::cout << "\n";
 }
 
 int main()
 {
     uint64_t Size = 14;
-    int my_arr[] = {9,8,7,6,5,4,3,2,1,0, 11, 12, 12, 13};
+    int my_arr[] = {9,8,7,6,5,4,3,2,1,0,11,12,12,13};
 
     // Size-1 because we define max index in the array that we can reach
     QuickSort<int>(&my_arr[0], 0, Size-1); 
