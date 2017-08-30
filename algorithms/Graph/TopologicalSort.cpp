@@ -4,8 +4,7 @@
 #include<iostream>
 #include <list>
 #include <stack>
- 
-// Class to represent a graph
+
 class Graph
 {
 private:
