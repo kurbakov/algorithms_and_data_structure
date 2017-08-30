@@ -7,18 +7,21 @@ void merging(T* Arr, T* temp, int low, int mid, int high) {
     int l1, l2, i;
 
     for(l1 = low, l2 = mid + 1, i = low; l1 <= mid && l2 <= high; i++) {
-        if(Arr[l1] <= Arr[l2])
+        if(Arr[l1] <= Arr[l2]){
             temp[i] = Arr[l1++];
-        else
+        }
+        else{
             temp[i] = Arr[l2++];
+        }
     }
 
     while(l1 <= mid) temp[i++] = Arr[l1++];
 
     while(l2 <= high) temp[i++] = Arr[l2++];
 
-    for(i = low; i <= high; i++)
+    for(i = low; i <= high; i++){
         Arr[i] = temp[i];
+    }
 }
 
 template<typename T>
