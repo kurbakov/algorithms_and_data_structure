@@ -4,7 +4,7 @@
 #include <iostream>
 
 template<typename T>
-void shell_sort(T* Arr, uint64_t Size){
+void ShellSort(T* Arr, uint64_t Size){
     int interval = 1;
     while (interval < Size/3) interval = interval*3+1;
 
@@ -33,7 +33,7 @@ void PrintArray(T* Arr, uint64_t Size){
 int main(){
     int my_array[] = {9,8,7,6,5,4,3,2,1,0};
     PrintArray<int>(&my_array[0], 10);
-    shell_sort<int>(&my_array[0], 10);
+    ShellSort<int>(&my_array[0], 10);
     PrintArray<int>(&my_array[0], 10);
 
     return 0;
