@@ -1,3 +1,6 @@
+// more info:
+// https://en.wikipedia.org/wiki/Polish_notation
+
 #include <iostream>
 #include <stack>
 #include <vector>

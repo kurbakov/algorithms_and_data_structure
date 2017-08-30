@@ -1,3 +1,6 @@
+// more info find here:
+// https://en.wikipedia.org/wiki/Shunting-yard_algorithm
+
 #include <iostream>
 #include <vector>
 

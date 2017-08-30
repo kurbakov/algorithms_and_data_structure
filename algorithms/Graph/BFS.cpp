@@ -1,4 +1,6 @@
+// more info:
 // http://www.geeksforgeeks.org/breadth-first-traversal-for-a-graph/
+
 #include<iostream>
 #include <list>
 
